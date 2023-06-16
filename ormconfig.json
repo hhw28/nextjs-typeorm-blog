@@ -2,13 +2,13 @@
    "type": "postgres",
    "host": "localhost",
    "port": 5432,
-   "username": "blog",
+   "username": "postgres",
    "password": "",
    "database": "blog_development",
    "synchronize": true,
    "logging": false,
    "entities": [
-      "src/entity/**/*.ts"
+      "src/entity/**/*.js"
    ],
    "migrations": [
       "src/migration/**/*.ts"

@@ -2,19 +2,19 @@
    "type": "postgres",
    "host": "localhost",
    "port": 5432,
-   "username": "postgres",
+   "username": "blog",
    "password": "",
    "database": "blog_development",
    "synchronize": false,
    "logging": false,
    "entities": [
-      "src/entity/**/*.js"
+      "dist/entity/**/*.js"
    ],
    "migrations": [
-      "src/migration/**/*.ts"
+      "dist/migration/**/*.js"
    ],
    "subscribers": [
-      "src/subscriber/**/*.ts"
+      "dist/subscriber/**/*.js"
    ],
    "cli": {
       "entitiesDir": "src/entity",

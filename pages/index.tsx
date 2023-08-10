@@ -21,7 +21,7 @@ const index: NextPage<Props> = (props) => {
   return (
     <div>
       <h1>你的浏览器是 {browser.name}</h1>
-      <h2>你的浏览器窗口大小是 {width} 像素12</h2>
+      <h2>你的浏览器窗口大小是 {width} 像素12333</h2>
     </div>
   );
 };
@@ -29,8 +29,8 @@ export default index;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const connection = await getDatabaseConnection()
-  const post = await connection.manager.find(Post)
-  console.log(post);
+  const posts = await connection.manager.find(Post)
+  console.log(posts);
   
   const ua = context.req.headers['user-agent'];
   const result = new UAParser(ua).getResult();

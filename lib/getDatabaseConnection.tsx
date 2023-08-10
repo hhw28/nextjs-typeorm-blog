@@ -1,4 +1,5 @@
 import { createConnection, getConnectionManager } from "typeorm"
+import 'reflect-metadata'
 import { Post } from "src/entity/Post"
 import { User } from "src/entity/User"
 import { Comment } from "src/entity/Comment"
@@ -12,18 +13,15 @@ const create = function(){
     })
 }
 
-const promise = (function(){
+const promise = (async function(){
     const manager = getConnectionManager()
-    if(!manager.has('default')){
-        return create()
-    }else{
-        const current = manager.get('default')
-        if(current.isConnected){
-            return current;
-        }else{
-            return create()
-        }
+
+    const current = manager.has('default') && manager.get('default')
+    if(current && current.isConnected){
+        await current.close()
     }
+
+    return create()
 })()
 
 export const getDatabaseConnection =  function(){

@@ -6,15 +6,17 @@ import {Comment} from './entity/Comment';
 
 createConnection().then(async connection => {
   const {manager} = connection;
+
+  const random = Math.round(Math.random()*100)
   // 创建 user 1
   const u1 = new User();
-  u1.username = 'hannah';
+  u1.username = `hannah ${random}`;
   u1.passwordDigest = 'xxx';
   await manager.save(u1);
   // 创建 post 1
   const p1 = new Post();
-  p1.title = 'Post 1';
-  p1.content = 'My First Post';
+  p1.title = `Post ${random}`;
+  p1.content = `My ${random} Post`;
   p1.author = u1;
   await manager.save(p1);
   const c1 = new Comment();

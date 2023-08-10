@@ -2,6 +2,7 @@ import {GetServerSideProps, NextPage} from 'next';
 import {UAParser} from 'ua-parser-js';
 import {useEffect, useState} from 'react';
 import { getDatabaseConnection } from 'lib/getDatabaseConnection';
+import { Post } from 'src/entity/Post';
 
 type Props = {
   browser: {
@@ -27,8 +28,9 @@ const index: NextPage<Props> = (props) => {
 export default index;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const connect = await getDatabaseConnection()
-  console.log(connect);
+  const connection = await getDatabaseConnection()
+  const post = await connection.manager.find(Post)
+  console.log(post);
   
   const ua = context.req.headers['user-agent'];
   const result = new UAParser(ua).getResult();

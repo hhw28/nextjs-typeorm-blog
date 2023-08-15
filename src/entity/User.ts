@@ -38,7 +38,6 @@ export class User {
   passwordConfirmation: string;
 
   async validate() {
-
     if (this.username.trim() === '') {
       this.errors.username.push('不能为空');
     }
@@ -53,9 +52,8 @@ export class User {
     }
 
     const found = await (await getDatabaseConnection()).manager.find(User, {username: this.username});
-      
     if (found.length > 0) {
-      this.errors.username.push('已存在，不能重复注册');
+      this.errors.username.push('用户名已存在');
     }
     
     if (this.password === '') {

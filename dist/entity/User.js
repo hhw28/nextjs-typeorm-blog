@@ -98,7 +98,7 @@ var User = (_dec = (0, _typeorm.Entity)('users'), _dec2 = (0, _typeorm.PrimaryGe
                 found = _context.sent;
 
                 if (found.length > 0) {
-                  this.errors.username.push('已存在，不能重复注册');
+                  this.errors.username.push('用户名已存在');
                 }
 
                 if (this.password === '') {

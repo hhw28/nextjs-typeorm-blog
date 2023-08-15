@@ -5,25 +5,26 @@ import { getDatabaseConnection } from 'lib/getDatabaseConnection';
 import { Post } from 'src/entity/Post';
 import Link from 'next/link';
 import axios, { AxiosResponse } from 'axios';
+import { User } from 'src/entity/User';
+import { withSession } from 'lib/withSession';
 
 
-const register: NextPage = (props) => {
-
+const register: NextPage<{ user: User }> = (props) => {
+    
   const [formData, setFormData] = useState({
     username: '',
     password: '',
-    passwordConfirmation: ''
   })
 
   const [errors, setErrors] = useState({
-    username: [], password: [], passwordConfirmation: []
+    username: [], 
+    password: [], 
   });
 
   const onSubmit = () => {
 
-    axios.post('/api/v1/register', formData).then(res => {
-      window.alert('注册成功');
-      window.location.href = '/login';
+    axios.post('/api/v1/login', formData).then(res => {
+      window.alert('登录成功');
     }, (error) => {
       if (error.response) {
         const response: AxiosResponse = error.response;
@@ -37,6 +38,11 @@ const register: NextPage = (props) => {
 
   return (
     <div>
+      {props.user &&
+      <div>
+        当前登录用户为 {props.user.username}
+      </div>
+      }
       <div>
         <label>用户名
           <input type="text" value={formData.username} onChange={(e) => setFormData({...formData, username: e.target.value})} />
@@ -63,13 +69,13 @@ const register: NextPage = (props) => {
 
 export default register;
 
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const connection = await getDatabaseConnection()
-//   const posts = await connection.manager.find(Post)
-  
-//   return {
-//     props: {
-//       posts: JSON.parse(JSON.stringify(posts)),
-//     }
-//   };
-// };
+// @ts-ignore
+export const getServerSideProps: GetServerSideProps = withSession(async (context) => {
+  // @ts-ignore
+  const user = context.req.session.get('currentUser');  
+  return {
+    props: {
+      user: user ? JSON.parse(JSON.stringify(user)) : null
+    }
+  };
+});

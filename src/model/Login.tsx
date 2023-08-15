@@ -1,6 +1,6 @@
 import {getDatabaseConnection} from '../../lib/getDatabaseConnection';
 import {User} from '../entity/User';
-// import md5 from 'md5';
+import md5 from 'md5';
 
 export class Login {
   username: string;
@@ -17,7 +17,7 @@ export class Login {
     const user = await connection.manager.findOne(User, {where: {username: this.username}});
     this.user = user;
     if (user) {   
-      if (user.passwordDigest !== this.password) {
+      if (user.passwordDigest !== md5(this.password)) {
         this.errors.password.push('密码与用户名不匹配');
       }
     } else {

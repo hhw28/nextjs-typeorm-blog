@@ -21,7 +21,8 @@ var _getDatabaseConnection = require("../../lib/getDatabaseConnection");
 
 var _User = require("../entity/User");
 
-// import md5 from 'md5';
+var _md = _interopRequireDefault(require("md5"));
+
 var Login = /*#__PURE__*/function () {
   function Login() {
     (0, _classCallCheck2["default"])(this, Login);
@@ -64,7 +65,7 @@ var Login = /*#__PURE__*/function () {
                 this.user = user;
 
                 if (user) {
-                  if (user.passwordDigest !== this.password) {
+                  if (user.passwordDigest !== (0, _md["default"])(this.password)) {
                     this.errors.password.push('密码与用户名不匹配');
                   }
                 } else {

@@ -87,7 +87,8 @@ var User = (_dec = (0, _typeorm.Entity)('users'), _dec2 = (0, _typeorm.PrimaryGe
 
                 if (this.username.trim().length < 3) {
                   this.errors.username.push('太短');
-                }
+                } // yarn m:run 时连接数据库此处会报错，可以先删除连接代码之后恢复
+
 
                 _context.next = 6;
                 return (0, _getDatabaseConnection.getDatabaseConnection)();

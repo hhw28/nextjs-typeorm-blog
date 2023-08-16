@@ -35,6 +35,7 @@ CREATE DATABASE blog_development ENCODING 'UTF8' LC_COLLATE 'en_US.utf8' LC_CTYP
 1、修改`ormconfig.json`中的`host`，mac为localhost，windows需要更改为本机ip地址，端口号为启动docker时使用的端口号
 
 2、`yarn m:run`生成数据表
+src/entity/User.ts 连接数据库时会报错可以先删除启动后再恢复
 
 3、`node dist/seed.js`填充数据
 

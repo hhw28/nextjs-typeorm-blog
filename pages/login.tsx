@@ -1,40 +1,45 @@
 import {GetServerSideProps, NextPage} from 'next';
 import {UAParser} from 'ua-parser-js';
-import {useEffect, useState} from 'react';
+import {ChangeEvent, useCallback, useEffect, useState} from 'react';
 import { getDatabaseConnection } from 'lib/getDatabaseConnection';
 import { Post } from 'src/entity/Post';
 import Link from 'next/link';
 import axios, { AxiosResponse } from 'axios';
 import { User } from 'src/entity/User';
 import { withSession } from 'lib/withSession';
+import { useForm } from 'hooks/useForm';
 
+interface FormDataType{
+  username: string;
+  password: string;
+}
 
 const register: NextPage<{ user: User }> = (props) => {
+
+  const request = (formData: FormDataType) => {
+    console.log('formData', formData);
     
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
+    return axios.post('/api/v1/login', formData)
+  }
+
+  const {form} = useForm<FormDataType>({
+    initFormData: {username:'', password: ''},
+    fields:[
+      {label: '用户名', key:'username', inputType:'text'},
+      {label: '密码', key:'password', inputType:'password'},
+    ],
+    buttons: <button>登录</button>,
+    submit: {
+      request: (formData: FormDataType) => axios.post(`/api/v1/login`, formData),
+      message: '登录成功'
+    }
   })
 
-  const [errors, setErrors] = useState({
-    username: [], 
-    password: [], 
-  });
+  // const [errors, setErrors] = useState({
+  //   username: [], 
+  //   password: [], 
+  // });
 
-  const onSubmit = () => {
-
-    axios.post('/api/v1/login', formData).then(res => {
-      window.alert('登录成功');
-    }, (error) => {
-      if (error.response) {
-        const response: AxiosResponse = error.response;
-        if (response.status === 422) {
-          setErrors(response.data);
-        }
-      }
-    })
-
-  }
 
   return (
     <div>
@@ -43,26 +48,7 @@ const register: NextPage<{ user: User }> = (props) => {
         当前登录用户为 {props.user.username}
       </div>
       }
-      <div>
-        <label>用户名
-          <input type="text" value={formData.username} onChange={(e) => setFormData({...formData, username: e.target.value})} />
-        </label>
-        {errors.username?.length > 0 && <div>
-            {errors.username.join(',')}
-          </div>}
-      </div>
-      <div>
-        <label>密码
-        <input type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} />
-        </label>
-        {errors.password?.length > 0 && <div>
-            {errors.password.join(',')}
-          </div>}
-      </div>
-
-      <div>
-        <button onClick={onSubmit}>登录</button>
-      </div>
+      {form}
     </div>
   );
 };

@@ -1,10 +1,5 @@
 import {GetServerSideProps, NextPage} from 'next';
-import {UAParser} from 'ua-parser-js';
-import {ChangeEvent, useCallback, useEffect, useState} from 'react';
-import { getDatabaseConnection } from 'lib/getDatabaseConnection';
-import { Post } from 'src/entity/Post';
-import Link from 'next/link';
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import { User } from 'src/entity/User';
 import { withSession } from 'lib/withSession';
 import { useForm } from 'hooks/useForm';
@@ -15,12 +10,6 @@ interface FormDataType{
 }
 
 const register: NextPage<{ user: User }> = (props) => {
-
-  const request = (formData: FormDataType) => {
-    console.log('formData', formData);
-    
-    return axios.post('/api/v1/login', formData)
-  }
 
   const {form} = useForm<FormDataType>({
     initFormData: {username:'', password: ''},
@@ -34,12 +23,6 @@ const register: NextPage<{ user: User }> = (props) => {
       message: '登录成功'
     }
   })
-
-  // const [errors, setErrors] = useState({
-  //   username: [], 
-  //   password: [], 
-  // });
-
 
   return (
     <div>

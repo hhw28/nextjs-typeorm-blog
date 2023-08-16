@@ -1,14 +1,14 @@
 import { AxiosResponse } from "axios"
 import { ReactChild, useCallback, useState } from "react"
 
-type Field = {
+type Field<T> = {
     label: string, 
     inputType: 'text' | 'password' | 'textarea',
-    key: string
+    key: keyof T
 }
 type FormOptions<T> = {
     initFormData: T,
-    fields: Field[],
+    fields: Field<T>[],
     buttons: ReactChild
     submit: {
         request: (formData: T) => Promise<AxiosResponse<T>>,
@@ -20,9 +20,21 @@ export function useForm<T>(options: FormOptions<T>){
     const {initFormData, fields, buttons, submit} = options
 
     const [formData, setFormData] = useState<T>(initFormData)
-    const [errors, setErrors] = useState([])
+    const [errors, setErrors] = useState(() => {
+        // const errors = {
+        //     username: ['错误1','错误2'],
+        //     password: ['错误1','错误2']
+        // }
+        const e:{ [k in keyof T]?: string[]} = {}
+        for(let key in initFormData){
+            if(initFormData.hasOwnProperty(key)){
+                e[key] = []
+            }
+        }
+        return e
+    })
 
-    const handleOnChange = useCallback((key:string, value:any) => {
+    const handleChange = useCallback((key:string, value:string) => {
         setFormData({...formData, [key]: value})
       },[formData])
 
@@ -44,14 +56,14 @@ export function useForm<T>(options: FormOptions<T>){
 
     const form =  <form onSubmit={handleSubmit}>
         {fields.map(field => 
-            <div key={field.key}>
+            <div key={field.key.toString()}>
             <label>
                 {field.label}
                 {
                     field.inputType === 'textarea' ? 
-                    <textarea cols={30} rows={10} onChange={(e) => handleOnChange(field.key, e.target.value)} />
+                    <textarea cols={30} rows={10} onChange={(e) => handleChange(field.key.toString(), e.target.value)} />
                     :
-                    <input type={field.inputType} onChange={(e) => handleOnChange(field.key, e.target.value)}/>
+                    <input type={field.inputType} onChange={(e) => handleChange(field.key.toString(), e.target.value)}/>
                 }
                 
             </label>

@@ -1,92 +1,43 @@
-import {GetServerSideProps, NextPage} from 'next';
-import {UAParser} from 'ua-parser-js';
-import {useEffect, useState} from 'react';
-import { getDatabaseConnection } from 'lib/getDatabaseConnection';
-import { Post } from 'src/entity/Post';
-import Link from 'next/link';
+import { NextPage } from 'next';
+import { useCallback, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
+import { useForm } from 'hooks/useForm';
 
+interface FormDataType {
+  username: string;
+  password: string;
+  passwordConfirmation: string;
+}
 
-const register: NextPage = (props) => {
+const register: NextPage = () => {
+  const initFormData = { username: '', password: '', passwordConfirmation: '' };
 
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    passwordConfirmation: ''
-  })
+  const onReset = useCallback((e) => {
+    e.preventDefault();
+    setFormData(initFormData);
+  }, []);
 
-  const [errors, setErrors] = useState({
-    username: [], password: [], passwordConfirmation: []
+  const { form, setFormData } = useForm<FormDataType>({
+    initFormData,
+    fields: [
+      { label: '用户名', key: 'username', inputType: 'text' },
+      { label: '密码', key: 'password', inputType: 'password' },
+      { label: '确认密码', key: 'passwordConfirmation', inputType: 'password' },
+    ],
+    buttons: (
+      <>
+        <button>注册</button>
+        <button onClick={onReset}>重置</button>
+      </>
+    ),
+    submit: {
+      request: (formData: FormDataType) => axios.post(`/api/v1/register`, formData),
+      message: '注册成功',
+      success: () => (window.location.href = '/login'),
+    },
   });
 
-  const onSubmit = () => {
-
-    axios.post('/api/v1/register', formData).then(res => {
-      window.alert('注册成功');
-      window.location.href = '/login';
-    }, (error) => {
-      if (error.response) {
-        const response: AxiosResponse = error.response;
-        if (response.status === 422) {
-          setErrors(response.data);
-        }
-      }
-    })
-
-  }
-
-  const onReset = () => {
-    setFormData({
-      username: '',
-      password: '',
-      passwordConfirmation: ''
-    })
-  }
-
-  return (
-    <div>
-      <div>
-        <label>用户名
-          <input type="text" value={formData.username} onChange={(e) => setFormData({...formData, username: e.target.value})} />
-        </label>
-        {errors.username?.length > 0 && <div>
-            {errors.username.join(',')}
-          </div>}
-      </div>
-      <div>
-        <label>密码
-        <input type="password" value={formData.password} onChange={(e) => setFormData({...formData, password: e.target.value})} />
-        </label>
-        {errors.password?.length > 0 && <div>
-            {errors.password.join(',')}
-          </div>}
-      </div>
-      <div>
-        <label>确认密码
-        <input type="password" value={formData.passwordConfirmation} onChange={(e) => setFormData({...formData, passwordConfirmation: e.target.value})} />
-        </label>
-        {errors.passwordConfirmation?.length > 0 && <div>
-            {errors.passwordConfirmation.join(',')}
-          </div>}
-      </div>
-
-      <div>
-        <button onClick={onSubmit}>注册</button>
-        <button onClick={onReset}>重置</button>
-      </div>
-    </div>
-  );
+  return <div>{form}</div>;
 };
 
 export default register;
-
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const connection = await getDatabaseConnection()
-//   const posts = await connection.manager.find(Post)
-  
-//   return {
-//     props: {
-//       posts: JSON.parse(JSON.stringify(posts)),
-//     }
-//   };
-// };

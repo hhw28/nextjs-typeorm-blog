@@ -1,29 +1,30 @@
-import { NextPage } from "next";
-import { useForm } from "hooks/useForm";
+import { NextPage } from 'next';
+import { useForm } from 'hooks/useForm';
+import axios from 'axios';
 
 type FormDataType = {
-    title: string;
-    content: string;
-}
+  title: string;
+  content: string;
+};
 
-const PostsNew:NextPage = () => {
+const PostsNew: NextPage = () => {
+  const { form } = useForm<FormDataType>({
+    initFormData: {
+      title: '',
+      content: '',
+    },
+    fields: [
+      { label: '标题', inputType: 'text', key: 'title' },
+      { label: '内容', inputType: 'textarea', key: 'content' },
+    ],
+    buttons: <button>提交</button>,
+    submit: {
+      request: (formData: FormDataType) => axios.post(`/api/v1/posts`, formData),
+      message: '新增成功',
+    },
+  });
 
+  return <div>{form}</div>;
+};
 
-    const {form} = useForm<FormDataType>({
-        initFormData: {
-            title: '',
-            content: ''
-        },
-        fields: [
-            {label: '标题', inputType: 'text', key: 'title'},
-            {label: '内容', inputType: 'textarea', key: 'content'},
-        ],
-        buttons: <button>提交</button>
-    })
-
-    return (
-        <div>{form}</div>
-    )
-}
-
-export default PostsNew
+export default PostsNew;

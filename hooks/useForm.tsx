@@ -1,25 +1,27 @@
-import { AxiosResponse } from "axios";
-import { ReactChild, useCallback, useState } from "react";
+import { AxiosResponse } from 'axios';
+import { ReactChild, useCallback, useState } from 'react';
 
 type Field<T> = {
   label: string;
-  inputType: "text" | "password" | "textarea";
+  inputType: 'text' | 'password' | 'textarea';
   key: keyof T;
 };
+type Sumbit<T> = {
+  request: (formData: T) => Promise<AxiosResponse<T>>;
+  message?: string;
+  success?: () => void;
+}
 type FormOptions<T> = {
   initFormData: T;
   fields: Field<T>[];
   buttons: ReactChild;
-  submit: {
-    request: (formData: T) => Promise<AxiosResponse<T>>;
-    message: string;
-  };
+  submit: Sumbit<T>;
 };
 
 export function useForm<T>(options: FormOptions<T>) {
   const { initFormData, fields, buttons, submit } = options;
 
-  const [formData, setFormData] = useState<T>(initFormData);
+  const [formData, setFormData] = useState(initFormData);
   const [errors, setErrors] = useState(() => {
     // const errors = {
     //     username: ['错误1','错误2'],
@@ -38,7 +40,7 @@ export function useForm<T>(options: FormOptions<T>) {
     (key: string, value: string) => {
       setFormData({ ...formData, [key]: value });
     },
-    [formData]
+    [formData],
   );
 
   const handleSubmit = useCallback(
@@ -47,7 +49,8 @@ export function useForm<T>(options: FormOptions<T>) {
 
       submit.request(formData).then(
         (res) => {
-          window.alert(submit.message);
+          window.alert(submit.message && '操作成功');
+          submit.success?.();
         },
         (error) => {
           if (error.response) {
@@ -56,10 +59,10 @@ export function useForm<T>(options: FormOptions<T>) {
               setErrors(response.data);
             }
           }
-        }
+        },
       );
     },
-    [formData, submit]
+    [formData, submit],
   );
 
   const form = (
@@ -68,26 +71,22 @@ export function useForm<T>(options: FormOptions<T>) {
         <div key={field.key.toString()}>
           <label>
             {field.label}
-            {field.inputType === "textarea" ? (
+            {field.inputType === 'textarea' ? (
               <textarea
                 cols={30}
                 rows={10}
-                onChange={(e) =>
-                  handleChange(field.key.toString(), e.target.value)
-                }
+                onChange={(e) => handleChange(field.key.toString(), e.target.value)}
+                value={formData[field.key].toString()}
               />
             ) : (
               <input
                 type={field.inputType}
-                onChange={(e) =>
-                  handleChange(field.key.toString(), e.target.value)
-                }
+                onChange={(e) => handleChange(field.key.toString(), e.target.value)}
+                value={formData[field.key].toString()}
               />
             )}
           </label>
-          {errors[field.key]?.length > 0 && (
-            <div>{errors[field.key].join(",")}</div>
-          )}
+          {errors[field.key]?.length > 0 && <div>{errors[field.key].join(',')}</div>}
         </div>
       ))}
       <div>{buttons}</div>
@@ -96,5 +95,6 @@ export function useForm<T>(options: FormOptions<T>) {
 
   return {
     form,
+    setFormData,
   };
 }

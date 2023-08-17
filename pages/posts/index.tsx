@@ -3,6 +3,8 @@ import { getDatabaseConnection } from 'lib/getDatabaseConnection';
 import { Post } from 'src/entity/Post';
 import Link from 'next/link';
 import { usePager } from 'hooks/usePager';
+import { useCallback } from 'react';
+import axios from 'axios';
 
 type Props = {
   posts: Post[];
@@ -16,19 +18,29 @@ const index: NextPage<Props> = (props) => {
 
   const { pager } = usePager({ page, total, totalPage });
 
+  const onDelete = useCallback((id: number) => {
+    axios.delete(`/api/v1/posts`, { data: { id } }).then((res) => {
+      window.location.reload()
+    });
+  }, []);
+
   return (
     <div>
       <h1>文章列表</h1>
       <Link href={'/posts/new'}>
         <button>新增</button>
       </Link>
-      {posts.map((post) => (
-        <div key={post.id}>
-          <Link href={`/posts/${post.id}`}>
-            <a>{post.title}</a>
-          </Link>
-        </div>
-      ))}
+      <ul>
+        {posts.map((post) => (
+          <li key={post.id}>
+            <Link href={`/posts/${post.id}`}>
+              <a>{post.title}</a>
+            </Link>
+
+            <button onClick={() => onDelete(post.id)}>删除</button>
+          </li>
+        ))}
+      </ul>
       <footer>{pager}</footer>
     </div>
   );

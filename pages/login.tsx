@@ -2,6 +2,7 @@ import { NextPage } from 'next';
 import axios from 'axios';
 import { User } from 'src/entity/User';
 import { useForm } from 'hooks/useForm';
+import qs from 'querystring';
 
 interface FormDataType {
   username: string;
@@ -19,7 +20,11 @@ const register: NextPage<{ user: User }> = (props) => {
     submit: {
       request: (formData: FormDataType) => axios.post(`/api/v1/login`, formData),
       message: '登录成功',
-      success: () => (window.location.href = '/'),
+      success: () => {
+        const query = qs.parse(window.location.search.substr(1));
+        console.log(query);
+        window.location.href = query.return_to?.toString() || '/';
+      },
     },
   });
 

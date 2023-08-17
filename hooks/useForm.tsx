@@ -20,9 +20,9 @@ type FormOptions<T> = {
 
 export function useForm<T>(options: FormOptions<T>) {
   const { initFormData, fields, buttons, submit } = options;
-
   const [formData, setFormData] = useState(initFormData);
-  const [errors, setErrors] = useState(() => {
+
+  const initErrors = () => {
     // const errors = {
     //     username: ['错误1','错误2'],
     //     password: ['错误1','错误2']
@@ -34,7 +34,8 @@ export function useForm<T>(options: FormOptions<T>) {
       }
     }
     return e;
-  });
+  }
+  const [errors, setErrors] = useState(initErrors);
 
   const handleChange = useCallback(
     (key: string, value: string) => {
@@ -47,9 +48,11 @@ export function useForm<T>(options: FormOptions<T>) {
     (e) => {
       e.preventDefault();
 
+      setErrors(initErrors)
+
       submit.request(formData).then(
         (res) => {
-          window.alert(submit.message && '操作成功');
+          window.alert(submit.message || '操作成功');
           submit.success?.();
         },
         (error) => {
@@ -57,6 +60,11 @@ export function useForm<T>(options: FormOptions<T>) {
             const response: AxiosResponse = error.response;
             if (response.status === 422) {
               setErrors(response.data);
+            }
+            if(response.status === 401){
+              window.alert(response.data.message)
+              window.location.href =
+              `/login?return_to=${encodeURIComponent(window.location.pathname)}`;
             }
           }
         },

@@ -2,12 +2,19 @@ import { GetServerSideProps, NextPage } from 'next';
 import { getDatabaseConnection } from 'lib/getDatabaseConnection';
 import { Post } from 'src/entity/Post';
 import Link from 'next/link';
+import { usePager } from 'hooks/usePager';
 
 type Props = {
   posts: Post[];
+  pageSize: number;
+  page: number;
+  total: number;
+  totalPage: number;
 };
 const index: NextPage<Props> = (props) => {
-  const { posts } = props;
+  const { posts, page, total, totalPage } = props;
+
+  const { pager } = usePager({ page, total, totalPage });
 
   return (
     <div>
@@ -22,18 +29,34 @@ const index: NextPage<Props> = (props) => {
           </Link>
         </div>
       ))}
+      <footer>{pager}</footer>
     </div>
   );
 };
 export default index;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { query } = context;
+
+  const page = parseInt(query.page?.toString()) || 1;
+  const pageSize = 10;
+
   const connection = await getDatabaseConnection();
-  const posts = await connection.manager.find(Post);
+  const [posts, count] = await connection.manager.findAndCount(Post, {
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  });
+
+  const total = count;
+  const totalPage = Math.ceil(total / pageSize);
 
   return {
     props: {
       posts: JSON.parse(JSON.stringify(posts)),
+      pageSize,
+      page,
+      total,
+      totalPage,
     },
   };
 };

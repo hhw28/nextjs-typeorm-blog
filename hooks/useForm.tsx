@@ -1,16 +1,18 @@
 import { AxiosResponse } from 'axios';
 import { ReactChild, useCallback, useState } from 'react';
+import cs from 'classnames';
 
 type Field<T> = {
   label: string;
   inputType: 'text' | 'password' | 'textarea';
   key: keyof T;
+  className?: string;
 };
 type Sumbit<T> = {
   request: (formData: T) => Promise<AxiosResponse<T>>;
   message?: string;
   success?: () => void;
-}
+};
 type FormOptions<T> = {
   initFormData: T;
   fields: Field<T>[];
@@ -34,7 +36,7 @@ export function useForm<T>(options: FormOptions<T>) {
       }
     }
     return e;
-  }
+  };
   const [errors, setErrors] = useState(initErrors);
 
   const handleChange = useCallback(
@@ -48,7 +50,7 @@ export function useForm<T>(options: FormOptions<T>) {
     (e) => {
       e.preventDefault();
 
-      setErrors(initErrors)
+      setErrors(initErrors);
 
       submit.request(formData).then(
         (res) => {
@@ -61,10 +63,11 @@ export function useForm<T>(options: FormOptions<T>) {
             if (response.status === 422) {
               setErrors(response.data);
             }
-            if(response.status === 401){
-              window.alert(response.data.message)
-              window.location.href =
-              `/login?return_to=${encodeURIComponent(window.location.pathname)}`;
+            if (response.status === 401) {
+              window.alert(response.data.message);
+              window.location.href = `/login?return_to=${encodeURIComponent(
+                window.location.pathname,
+              )}`;
             }
           }
         },
@@ -74,13 +77,17 @@ export function useForm<T>(options: FormOptions<T>) {
   );
 
   const form = (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="form">
       {fields.map((field) => (
-        <div key={field.key.toString()}>
-          <label>
-            {field.label}
+        <div
+          key={field.key.toString()}
+          className={cs('field', `field-${field.key.toString()}`, field.className)}
+        >
+          <label className="label">
+            <span className="label-text">{field.label}</span>
             {field.inputType === 'textarea' ? (
               <textarea
+                className="control"
                 cols={30}
                 rows={10}
                 onChange={(e) => handleChange(field.key.toString(), e.target.value)}
@@ -88,6 +95,7 @@ export function useForm<T>(options: FormOptions<T>) {
               />
             ) : (
               <input
+                className="control"
                 type={field.inputType}
                 onChange={(e) => handleChange(field.key.toString(), e.target.value)}
                 value={formData[field.key].toString()}
@@ -97,7 +105,42 @@ export function useForm<T>(options: FormOptions<T>) {
           {errors[field.key]?.length > 0 && <div>{errors[field.key].join(',')}</div>}
         </div>
       ))}
-      <div>{buttons}</div>
+      <div className="action">{buttons}</div>
+
+      <style jsx>{`
+        .field {
+          margin: 8px 0;
+        }
+        .label {
+          display: flex;
+          line-height: 32px;
+        }
+        .label input {
+          height: 32px;
+        }
+        .label > .label-text {
+          white-space: nowrap;
+          margin-right: 1em;
+          width: 6em;
+          text-align: right;
+        }
+        .label > .control {
+          width: 100%;
+        }
+        .action {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+        }
+      `}</style>
+      <style jsx global>
+        {`
+          button {
+            margin: 6px;
+          }
+        `}
+      </style>
     </form>
   );
 

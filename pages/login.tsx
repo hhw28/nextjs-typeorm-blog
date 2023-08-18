@@ -28,7 +28,22 @@ const register: NextPage<{ user: User }> = (props) => {
     },
   });
 
-  return <div>{form}</div>;
+  return (
+    <>
+      <div className="wrapper">{form}</div>
+      <style jsx>
+        {`
+          .wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+          }
+        `}
+      </style>
+    </>
+  );
 };
 
 export default register;

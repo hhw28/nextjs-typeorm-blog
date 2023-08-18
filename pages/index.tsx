@@ -8,24 +8,52 @@ type Props = {
 };
 const index: NextPage<Props> = (props) => {
   return (
-    <div>
-      {props.user && <div>当前登录用户为 {props.user.username}</div>}
-      <div>
-        <Link href="/register">
-          <a>注册</a>
-        </Link>
+    <>
+      {/* <span>
+        {props.user && <div>当前登录用户为 {props.user.username}</div>}
+      </span> */}
+      <div className="cover">
+        <img src="/logo.png" alt="" />
+        <h1>我的博客</h1>
+        <div className="action">
+          <p>
+            <Link href="/register">
+              <a>注册</a>
+            </Link>
+          </p>
+          <p>
+            <Link href="/login">
+              <a>登录</a>
+            </Link>
+          </p>
+          <p>
+            <Link href="/posts">
+              <a>文章列表</a>
+            </Link>
+          </p>
+        </div>
       </div>
-      <div>
-        <Link href="/login">
-          <a>登录</a>
-        </Link>
-      </div>
-      <div>
-        <Link href="/posts">
-          <a>Posts</a>
-        </Link>
-      </div>
-    </div>
+      <style jsx>{`
+        .cover {
+          height: 100vh;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+        }
+        .cover > img {
+          width: 120px;
+          height: 120px;
+        }
+        .action{
+          display: flex;
+        }
+
+        .action > p {
+          margin: 6px;
+        }
+      `}</style>
+    </>
   );
 };
 export default index;

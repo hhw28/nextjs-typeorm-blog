@@ -20,18 +20,6 @@ const index: NextPage<Props> = (props) => {
 
   const { pager } = usePager({ page, total, totalPage });
 
-  const onDelete = useCallback((id: number) => {
-    axios.delete(`/api/v1/posts`, { data: { id } }).then(
-      (res) => {
-        window.alert('删除成功');
-        window.location.reload();
-      },
-      () => {
-        window.alert('删除失败');
-      },
-    );
-  }, []);
-
   return (
     <>
       <div className="posts">
@@ -53,14 +41,11 @@ const index: NextPage<Props> = (props) => {
               <span>{post.title}</span>
             </Link>
 
-            <div>
+            {/* <div>
               <Link href={`/posts/${post.id}`}>
                 <button>查看</button>
               </Link>
-              <button onClick={() => onDelete(post.id)}>
-                删除
-              </button>
-            </div>
+            </div> */}
           </div>
         ))}
 

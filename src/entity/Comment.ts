@@ -3,7 +3,6 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
@@ -24,4 +23,18 @@ export class Comment {
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
+
+  async validate() {
+    if (this.content.trim() === '') {
+      this.errors.content.push('评论不能为空');
+    }
+  }
+
+  errors = {
+    content: [] as string[],
+  };
+
+  hasErrors() {
+    return !!Object.values(this.errors).find(v => v.length > 0);
+  }
 }

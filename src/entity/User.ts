@@ -3,16 +3,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn, OneToMany,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
+  UpdateDateColumn,
 } from 'typeorm';
-import {Post} from './Post';
-import {Comment} from './Comment';
+import { Post } from './Post';
+import { Comment } from './Comment';
 import { getDatabaseConnection } from 'lib/getDatabaseConnection';
 import md5 from 'md5';
-import _ from 'lodash'
+import _ from 'lodash';
 
 @Entity('users')
 export class User {
@@ -26,15 +25,15 @@ export class User {
   createdAt: Date;
   @UpdateDateColumn()
   updatedAt: Date;
-  @OneToMany(type => Post, post => post.author)
+  @OneToMany('Post', 'author')
   posts: Post[];
-  @OneToMany(type => Comment, comment => comment.user)
-  comments: Comment[]
+  @OneToMany('Comment', 'user')
+  comments: Comment[];
 
   errors = {
     username: [] as string[],
     password: [] as string[],
-    passwordConfirmation: [] as string[]
+    passwordConfirmation: [] as string[],
   };
 
   password: string;
@@ -55,11 +54,13 @@ export class User {
     }
 
     // yarn m:run 时连接数据库此处会报错，可以先删除连接代码之后恢复
-    const found = await (await getDatabaseConnection()).manager.find(User, {username: this.username});
+    const found = await (
+      await getDatabaseConnection()
+    ).manager.find('User', { username: this.username });
     if (found.length > 0) {
       this.errors.username.push('用户名已存在');
     }
-    
+
     if (this.password === '') {
       this.errors.password.push('不能为空');
     }
@@ -69,7 +70,7 @@ export class User {
   }
 
   hasErrors() {
-    return !!Object.values(this.errors).find(v => v.length > 0);
+    return !!Object.values(this.errors).find((v) => v.length > 0);
   }
 
   @BeforeInsert()

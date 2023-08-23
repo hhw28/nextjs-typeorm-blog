@@ -5,7 +5,7 @@ import { Post } from 'src/entity/Post';
 import { Comment } from 'src/entity/Comment';
 import Link from 'next/link';
 import { withSession } from 'lib/withSession';
-import { marked } from 'marked';
+import marked from 'marked';
 import { useForm } from 'hooks/useForm';
 import axios from 'axios';
 import { User } from 'src/entity/User';
@@ -94,8 +94,8 @@ const postsShow: NextPage<Props> = (props) => {
         </header>
         <article
           className="markdown-body"
-          // dangerouslySetInnerHTML={{ __html: marked(post.content) }}
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: marked(post.content) }}
+          // dangerouslySetInnerHTML={{ __html: post.content }}
         ></article>
         <h3>评论</h3>
         <ul>

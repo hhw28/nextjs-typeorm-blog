@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { Post } from './Post';
 import { Comment } from './Comment';
+import { getDatabaseConnection } from 'lib/getDatabaseConnection';
 import md5 from 'md5';
 import _ from 'lodash';
 
@@ -53,6 +54,12 @@ export class User {
     }
 
     // yarn m:run 时连接数据库此处会报错，可以先删除连接代码之后恢复
+    const found = await (
+      await getDatabaseConnection()
+    ).manager.find('User', { username: this.username });
+    if (found.length > 0) {
+      this.errors.username.push('用户名已存在');
+    }
 
     if (this.password === '') {
       this.errors.password.push('不能为空');

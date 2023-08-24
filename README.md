@@ -28,6 +28,7 @@ psql -U blog
 
 // 创建名为blog_development的数据库
 CREATE DATABASE blog_development ENCODING 'UTF8' LC_COLLATE 'en_US.utf8' LC_CTYPE 'en_US.utf8';
+CREATE DATABASE blog_production ENCODING 'UTF8' LC_COLLATE 'en_US.utf8' LC_CTYPE 'en_US.utf8';
 ```
 
 ## 修改数据表
@@ -54,4 +55,13 @@ yarn dev
 ```
 yarn build
 yarn start
+```
+
+## docker部署
+
+```
+1. `git pull`
+2. `yarn build`
+3. `docker build . -t hhw/node-web-app`
+4. `docker run -p 3000:3000 -d hhw/node-web-app`
 ```

@@ -9,6 +9,7 @@ const create = function () {
   // @ts-ignore
   return createConnection({
     ...config,
+    database: process.env.NODE_ENV === 'production' ? 'blog_production' : 'blog_development',
     entities: [Post, User, Comment],
   });
 };

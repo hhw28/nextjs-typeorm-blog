@@ -31,7 +31,7 @@ CREATE DATABASE blog_development ENCODING 'UTF8' LC_COLLATE 'en_US.utf8' LC_CTYP
 CREATE DATABASE blog_production ENCODING 'UTF8' LC_COLLATE 'en_US.utf8' LC_CTYPE 'en_US.utf8';
 ```
 
-## 修改数据表
+## 创建数据表
 
 1、修改`ormconfig.json`中的`host`，mac为localhost，windows需要更改为本机ip地址，端口号为启动docker时使用的端口号
 
@@ -52,7 +52,7 @@ yarn dev
 
 ## 部署
 
-```
+```bash
 yarn build
 yarn start
 ```
@@ -60,8 +60,15 @@ yarn start
 ## docker部署
 
 ```
-1. `git pull`
-2. `yarn build`
-3. `docker build . -t hhw/node-web-app`
-4. `docker run -p 3000:3000 -d hhw/node-web-app`
+- `git pull`
+- `yarn install --production=false`
+- `yarn build`
+- `docker build -t hhw/node-web-app .`
+- `docker run --network=host -p 3000:3000 -d hhw/node-web-app`
+```
+
+## 自动化部署
+```bash
+git pull
+ssh blog@120.26.200.119 'bash -s' < bin/deploy.sh
 ```

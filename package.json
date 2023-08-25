@@ -3,9 +3,9 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"next dev\" \"yarn compile:watch\"",
-    "compile:watch":"\"babel -w ./src --out-dir dist --extensions .ts,.tsx\"",
-    "compile":"\"babel ./src --out-dir dist --extensions .ts,.tsx\"",
+    "dev": "export NODE_OPTIONS=--openssl-legacy-provider && concurrently \"next dev\" \"yarn compile:watch\"",
+    "compile:watch":"babel -w ./src --out-dir dist --extensions .ts,.tsx",
+    "compile":"babel ./src --out-dir dist --extensions .ts,.tsx",
     "build": "next build",
     "start": "next start",
     "m:create": "typeorm migration:create",

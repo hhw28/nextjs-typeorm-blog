@@ -64,7 +64,7 @@ yarn start
 - `yarn install --production=false`
 - `yarn build`
 - `docker build -t hhw/node-web-app .`
-- `docker run --network=host -p 3000:3000 -d hhw/node-web-app`
+- `docker run --name app --network=host -p 3000:3000 -d hhw/node-web-app`
 ```
 
 ## 自动化部署

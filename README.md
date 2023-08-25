@@ -69,6 +69,6 @@ yarn start
 
 ## 自动化部署
 ```bash
-git pull
+git push
 ssh blog@120.26.200.119 'bash -s' < bin/deploy.sh
 ```

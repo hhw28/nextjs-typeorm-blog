@@ -7,6 +7,8 @@
 /.vscode/
 /.pnp
 .pnp.js
+/env.local
+ormconfig.json
 
 # testing
 /coverage
